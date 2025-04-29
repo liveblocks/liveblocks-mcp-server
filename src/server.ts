@@ -2,7 +2,7 @@ import { z } from "zod";
 import { callLiveblocksApi } from "./utils.js";
 import { Liveblocks } from "@liveblocks/node";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { CommentBody, ThreadMetadata } from "./zod.js";
+import { CommentBody } from "./zod.js";
 
 const liveblocks = new Liveblocks({
   secret: process.env.LIVEBLOCKS_SECRET_KEY as string,
@@ -602,3 +602,156 @@ server.tool(
 );
 
 // === Notifications ================================================
+
+server.tool(
+  "liveblocks-get-inbox-notifications",
+  `Get recent Liveblocks inbox notifications`,
+  {
+    userId: z.string(),
+    query: z
+      .object({
+        unread: z.boolean(),
+      })
+      .optional(),
+    startingAfter: z.string().optional(),
+    limit: z.number().optional(),
+  },
+  async ({ userId, query, startingAfter, limit }, extra) => {
+    return await callLiveblocksApi(
+      liveblocks.getInboxNotifications(
+        { userId, query, startingAfter, limit },
+        { signal: extra.signal }
+      )
+    );
+  }
+);
+
+server.tool(
+  "liveblocks-get-inbox-notification",
+  "Get a Liveblocks inbox notification",
+  {
+    userId: z.string(),
+    inboxNotificationId: z.string(),
+  },
+  async ({ userId, inboxNotificationId }, extra) => {
+    return await callLiveblocksApi(
+      liveblocks.getInboxNotification(
+        { userId, inboxNotificationId },
+        { signal: extra.signal }
+      )
+    );
+  }
+);
+
+server.tool(
+  "liveblocks-trigger-inbox-notification",
+  "Create a custom Liveblocks inbox notification",
+  {
+    userId: z.string(),
+    kind: z.string().regex(/^\$/, {
+      message: "String must start with '$'",
+    }),
+    subjectId: z.string(),
+    activityData: z.record(
+      z.string(),
+      z.union([z.string(), z.boolean(), z.number()])
+    ),
+    roomId: z.string().optional(),
+  },
+  async ({ userId, kind, subjectId, activityData, roomId }, extra) => {
+    return await callLiveblocksApi(
+      liveblocks.triggerInboxNotification(
+        { userId, kind: kind as `$${string}`, subjectId, activityData, roomId },
+        { signal: extra.signal }
+      )
+    );
+  }
+);
+
+server.tool(
+  "liveblocks-delete-inbox-notification",
+  "Delete a Liveblocks inbox notification",
+  {
+    userId: z.string(),
+    inboxNotificationId: z.string(),
+  },
+  async ({ userId, inboxNotificationId }, extra) => {
+    return await callLiveblocksApi(
+      liveblocks.deleteInboxNotification(
+        { userId, inboxNotificationId },
+        { signal: extra.signal }
+      )
+    );
+  }
+);
+
+server.tool(
+  "liveblocks-delete-all-inbox-notifications",
+  "Delete all Liveblocks inbox notifications",
+  {
+    userId: z.string(),
+  },
+  async ({ userId }, extra) => {
+    return await callLiveblocksApi(
+      liveblocks.deleteAllInboxNotifications(
+        { userId },
+        { signal: extra.signal }
+      )
+    );
+  }
+);
+
+server.tool(
+  "liveblocks-get-notification-settings",
+  "Get a Liveblocks notification settings",
+  {
+    userId: z.string(),
+  },
+  async ({ userId }, extra) => {
+    return await callLiveblocksApi(
+      liveblocks.getNotificationSettings({ userId }, { signal: extra.signal })
+    );
+  }
+);
+
+server.tool(
+  "liveblocks-update-notification-settings",
+  "Update Liveblocks notification settings",
+  {
+    userId: z.string(),
+    data: z.record(
+      z.string(),
+      z.record(
+        z.union([
+          z.literal("thread"),
+          z.literal("textMention"),
+          z.string().regex(/^\$/, {
+            message: "String must start with '$'",
+          }),
+        ]),
+        z.boolean()
+      )
+    ),
+  },
+  async ({ userId }, extra) => {
+    return await callLiveblocksApi(
+      liveblocks.getNotificationSettings({ userId }, { signal: extra.signal })
+    );
+  }
+);
+
+server.tool(
+  "liveblocks-delete-notification-settings",
+  "Delete Liveblocks notification settings",
+  {
+    userId: z.string(),
+  },
+  async ({ userId }, extra) => {
+    return await callLiveblocksApi(
+      liveblocks.deleteNotificationSettings(
+        { userId },
+        { signal: extra.signal }
+      )
+    );
+  }
+);

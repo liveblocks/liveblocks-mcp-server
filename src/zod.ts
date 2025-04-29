@@ -34,8 +34,3 @@ export const CommentBody = z.object({
   version: z.literal(1),
   content: z.array(CommentBodyParagraph),
 });
-
-export const ThreadMetadata = z.record(
-  z.string(),
-  z.union([z.string(), z.boolean(), z.number()])
-);
