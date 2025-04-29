@@ -2,7 +2,12 @@ import { z } from "zod";
 import { callLiveblocksApi } from "./utils.js";
 import { Liveblocks } from "@liveblocks/node";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { CommentBody } from "./zod.js";
+import {
+  CommentBody,
+  DefaultAccesses,
+  GroupsAccesses,
+  UsersAccesses,
+} from "./zod.js";
 
 const liveblocks = new Liveblocks({
   secret: process.env.LIVEBLOCKS_SECRET_KEY as string,
@@ -11,18 +16,12 @@ const liveblocks = new Liveblocks({
 export const server = new McpServer({
   name: "liveblocks-mcp-server",
   version: "1.0.0",
-  capabilities: {
-    resources: {},
-    tools: {},
-  },
 });
-
-// Note: `tuple` and `literal` Zod types cause issues with the MCP server
 
 // === Rooms ========================================================
 
 server.tool(
-  "liveblocks-get-rooms",
+  "lb-get-rooms",
   `Get recent Liveblocks rooms`,
   {
     limit: z.number().lte(100),
@@ -50,19 +49,29 @@ server.tool(
   }
 );
 
-// TODO make better
 server.tool(
-  "liveblocks-create-room",
+  "lb-create-room",
   "Create a Liveblocks room",
   {
     roomId: z.string(),
+    defaultAccesses: DefaultAccesses,
+    groupsAccesses: GroupsAccesses.optional(),
+    usersAccesses: UsersAccesses.optional(),
     metadata: z.record(z.string(), z.string()).optional(),
   },
-  async ({ roomId }, extra) => {
+  async (
+    { roomId, defaultAccesses, groupsAccesses, usersAccesses, metadata },
+    extra
+  ) => {
     return await callLiveblocksApi(
       liveblocks.createRoom(
         roomId,
-        { defaultAccesses: ["room:write"] },
+        {
+          defaultAccesses: defaultAccesses as any,
+          groupsAccesses: groupsAccesses as any,
+          usersAccesses: usersAccesses as any,
+          metadata,
+        },
         { signal: extra.signal }
       )
     );
@@ -70,7 +79,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-get-room",
+  "lb-get-room",
   "Get a Liveblocks room",
   {
     roomId: z.string(),
@@ -83,7 +92,36 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-delete-room",
+  "lb-update-room",
+  "Update a Liveblocks room",
+  {
+    roomId: z.string(),
+    defaultAccesses: DefaultAccesses,
+    groupsAccesses: GroupsAccesses.optional(),
+    usersAccesses: UsersAccesses.optional(),
+    metadata: z.record(z.string(), z.union([z.string(), z.null()])).optional(),
+  },
+  async (
+    { roomId, defaultAccesses, groupsAccesses, usersAccesses, metadata },
+    extra
+  ) => {
+    return await callLiveblocksApi(
+      liveblocks.updateRoom(
+        roomId,
+        {
+          defaultAccesses: defaultAccesses as any,
+          groupsAccesses: groupsAccesses as any,
+          usersAccesses: usersAccesses as any,
+          metadata,
+        },
+        { signal: extra.signal }
+      )
+    );
+  }
+);
+
+server.tool(
+  "lb-delete-room",
   "Delete a Liveblocks room",
   {
     roomId: z.string(),
@@ -96,7 +134,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-update-room-id",
+  "lb-update-room-id",
   "Update a Liveblocks room's ID",
   {
     roomId: z.string(),
@@ -113,7 +151,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-get-active-users",
+  "lb-get-active-users",
   "Get a Liveblocks room's active users",
   {
     roomId: z.string(),
@@ -126,7 +164,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-broadcast-event",
+  "lb-broadcast-event",
   "Broadcast an event to a Liveblocks room",
   {
     roomId: z.string(),
@@ -142,7 +180,7 @@ server.tool(
 // === Storage ======================================================
 
 server.tool(
-  "liveblocks-get-storage-document",
+  "lb-get-storage-document",
   "Get a Liveblocks storage document",
   {
     roomId: z.string(),
@@ -157,7 +195,7 @@ server.tool(
 // === Yjs ==========================================================
 
 server.tool(
-  "liveblocks-get-yjs-document",
+  "lb-get-yjs-document",
   "Get a Liveblocks Yjs text document",
   {
     roomId: z.string(),
@@ -179,7 +217,7 @@ server.tool(
 // === Comments =====================================================
 
 server.tool(
-  "liveblocks-get-threads",
+  "lb-get-threads",
   `Get recent Liveblocks threads`,
   {
     roomId: z.string(),
@@ -208,7 +246,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-create-thread",
+  "lb-create-thread",
   `Create a Liveblocks thread. Always ask for a userId.`,
   {
     roomId: z.string(),
@@ -231,7 +269,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-get-thread",
+  "lb-get-thread",
   "Get a Liveblocks thread",
   {
     roomId: z.string(),
@@ -245,7 +283,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-get-thread-participants",
+  "lb-get-thread-participants",
   "Get a Liveblocks thread's participants",
   {
     roomId: z.string(),
@@ -262,7 +300,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-edit-thread-metadata",
+  "lb-edit-thread-metadata",
   `Edit a Liveblocks thread's metadata. \`null\` can be used to remove a key.`,
   {
     roomId: z.string(),
@@ -287,7 +325,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-mark-thread-as-resolved",
+  "lb-mark-thread-as-resolved",
   "Mark a Liveblocks thread as resolved",
   {
     roomId: z.string(),
@@ -307,7 +345,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-mark-thread-as-unresolved",
+  "lb-mark-thread-as-unresolved",
   "Mark a Liveblocks thread as unresolved",
   {
     roomId: z.string(),
@@ -327,7 +365,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-delete-thread",
+  "lb-delete-thread",
   "Delete a Liveblocks thread",
   {
     roomId: z.string(),
@@ -341,7 +379,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-subscribe-to-thread",
+  "lb-subscribe-to-thread",
   "Subscribe to a Liveblocks thread",
   {
     roomId: z.string(),
@@ -361,7 +399,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-unsubscribe-from-thread",
+  "lb-unsubscribe-from-thread",
   "Unsubscribe from a Liveblocks thread",
   {
     roomId: z.string(),
@@ -381,7 +419,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-get-thread-subscriptions",
+  "lb-get-thread-subscriptions",
   "Get a Liveblocks thread's subscriptions",
   {
     roomId: z.string(),
@@ -398,7 +436,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-create-comment",
+  "lb-create-comment",
   `Create a Liveblocks comment. Always ask for a userId.`,
   {
     roomId: z.string(),
@@ -420,7 +458,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-get-comment",
+  "lb-get-comment",
   `Get a Liveblocks comment`,
   {
     roomId: z.string(),
@@ -438,7 +476,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-edit-comment",
+  "lb-edit-comment",
   `Edit a Liveblocks comment`,
   {
     roomId: z.string(),
@@ -461,7 +499,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-delete-comment",
+  "lb-delete-comment",
   `Delete a Liveblocks comment`,
   {
     roomId: z.string(),
@@ -479,7 +517,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-add-comment-reaction",
+  "lb-add-comment-reaction",
   `Add a reaction to a Liveblocks comment`,
   {
     roomId: z.string(),
@@ -502,7 +540,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-remove-comment-reaction",
+  "lb-remove-comment-reaction",
   `Remove a reaction from a Liveblocks comment`,
   {
     roomId: z.string(),
@@ -525,7 +563,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-get-room-subscription-settings",
+  "lb-get-room-subscription-settings",
   `Get a Liveblocks room's subscription settings`,
   {
     roomId: z.string(),
@@ -542,7 +580,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-update-room-subscription-settings",
+  "lb-update-room-subscription-settings",
   `Update a Liveblocks room's subscription settings`,
   {
     roomId: z.string(),
@@ -569,7 +607,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-delete-room-subscription-settings",
+  "lb-delete-room-subscription-settings",
   `Delete a Liveblocks room's subscription settings`,
   {
     roomId: z.string(),
@@ -586,8 +624,8 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-get-user-room-subscription-settings",
-  `Get user's Liveblocks room subscription settings`,
+  "lb-get-user-room-subscription",
+  `Get a user's room subscription settings`,
   {
     userId: z.string(),
   },
@@ -604,7 +642,7 @@ server.tool(
 // === Notifications ================================================
 
 server.tool(
-  "liveblocks-get-inbox-notifications",
+  "lb-get-inbox-notifications",
   `Get recent Liveblocks inbox notifications`,
   {
     userId: z.string(),
@@ -627,7 +665,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-get-inbox-notification",
+  "lb-get-inbox-notification",
   "Get a Liveblocks inbox notification",
   {
     userId: z.string(),
@@ -644,7 +682,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-trigger-inbox-notification",
+  "lb-trigger-inbox-notification",
   "Create a custom Liveblocks inbox notification",
   {
     userId: z.string(),
@@ -669,7 +707,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-delete-inbox-notification",
+  "lb-delete-inbox-notification",
   "Delete a Liveblocks inbox notification",
   {
     userId: z.string(),
@@ -686,7 +724,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-delete-all-inbox-notifications",
+  "lb-delete-all-inbox-notifications",
   "Delete all Liveblocks inbox notifications",
   {
     userId: z.string(),
@@ -702,7 +740,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-get-notification-settings",
+  "lb-get-notification-settings",
   "Get a Liveblocks notification settings",
   {
     userId: z.string(),
@@ -715,7 +753,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-update-notification-settings",
+  "lb-update-notification-settings",
   "Update Liveblocks notification settings",
   {
     userId: z.string(),
@@ -741,7 +779,7 @@ server.tool(
 );
 
 server.tool(
-  "liveblocks-delete-notification-settings",
+  "lb-delete-notification-settings",
   "Delete Liveblocks notification settings",
   {
     userId: z.string(),
