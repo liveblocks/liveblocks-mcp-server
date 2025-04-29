@@ -1,0 +1,72 @@
+# Liveblocks MCP Server
+
+This MCP server allows AI to use a number of functions from [`@liveblocks/node`](https://liveblocks.io/docs/api-reference/liveblocks-node). For example, it can create, modify, and delete different aspects of Liveblocks such as rooms, threads comments, notifications, and more. It also has read access to Storage and Yjs.
+
+## Automatic setup
+
+Coming soon with Smithery.
+
+## Manual setup
+
+1. Clone this repo.
+
+```bash
+git clone https://github.com/liveblocks/liveblocks-mcp-server.git
+```
+
+2. Build the project.
+
+```bash
+npm install
+npm run build
+```
+
+3. Get your Liveblocks secret key from the [dashboard](https://liveblocks.io/dashboard).
+
+```
+sk_dev_Ns35f5G...
+```
+
+### Cursor
+
+4. Go to File → Cursor Settings → MCP → Add new server.
+
+5. Add the following, with the full path to the repo and your secret key:
+
+```json
+{
+  "mcpServers": {
+    "liveblocks-mcp-server": {
+      "command": "node",
+      "args": ["/full/path/to/the/repo/liveblocks-mcp-server/build/index.js"],
+      "env": {
+        "LIVEBLOCKS_SECRET_KEY": "sk_dev_Ns35f5G..."
+      }
+    }
+  }
+}
+```
+
+6. Check it's enabled in the MCP menu.
+
+### Claude Desktop
+
+4. Go to File → Settings → Developer → Edit config.
+
+5. Open the JSON file, `claude_desktop_config.json`.
+
+6. Add the following, with the full path to the repo and your secret key:
+
+```json
+{
+  "mcpServers": {
+    "liveblocks-mcp-server": {
+      "command": "node",
+      "args": ["/full/path/to/the/repo/liveblocks-mcp-server/build/index.js"],
+      "env": {
+        "LIVEBLOCKS_SECRET_KEY": "sk_dev_Ns35f5G..."
+      }
+    }
+  }
+}
+```
