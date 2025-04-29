@@ -51,7 +51,7 @@ sk_dev_Ns35f5G...
 
 ### Claude Desktop
 
-4. Go to File → Settings → Developer → Edit config.
+4. Go to File → Settings → Developer → Edit Config.
 
 5. Open the JSON file, `claude_desktop_config.json`.
 
