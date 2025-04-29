@@ -10,10 +10,10 @@ startCommand:
     properties:
       secretKey:
         type: string
-        description: Liveblocks secret key for API access
+        description: Liveblocks secret key from liveblocks.io/dashboard
   commandFunction:
     # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
     |-
     (config) => ({ command: 'node', args: ['build/index.js'], env: { LIVEBLOCKS_SECRET_KEY: config.secretKey } })
   exampleConfig:
-    secretKey: sk_dev_exampleKey123
+    secretKey: sk_dev_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
