@@ -35,8 +35,8 @@ export const CommentBody = z.object({
   content: z.array(CommentBodyParagraph),
 });
 
-// The following cause MCP server issues when using `tuples` and `literals` together
-// so I'm using `describe` instead, as AI can figure it out
+// The following caused MCP server issues when using `tuples` and `literals` together
+// so I'm using `.describe` instead, as AI can figure it out this way
 
 export const DefaultAccesses = z.array(z.string()).describe(
   `The default access permissions for the room. Permissions can be: 

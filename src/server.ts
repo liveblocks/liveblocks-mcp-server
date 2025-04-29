@@ -690,11 +690,13 @@ server.tool(
       message: "String must start with '$'",
     }),
     subjectId: z.string(),
-    activityData: z.record(
-      z.string(),
-      z.union([z.string(), z.boolean(), z.number()])
-    ),
-    roomId: z.string().optional(),
+    activityData: z
+      .record(z.string(), z.union([z.string(), z.boolean(), z.number()]))
+      .describe("Custom data related to the notification"),
+    roomId: z
+      .string()
+      .optional()
+      .describe("Don't add this unless specifically asked"),
   },
   async ({ userId, kind, subjectId, activityData, roomId }, extra) => {
     return await callLiveblocksApi(
