@@ -1,10 +1,17 @@
 # Liveblocks MCP Server
+[![smithery badge](https://smithery.ai/badge/@liveblocks/liveblocks-mcp-server)](https://smithery.ai/server/@liveblocks/liveblocks-mcp-server)
 
 This MCP server allows AI to use a number of functions from [`@liveblocks/node`](https://liveblocks.io/docs/api-reference/liveblocks-node). For example, it can create, modify, and delete different aspects of Liveblocks such as rooms, threads comments, notifications, and more. It also has read access to Storage and Yjs.
 
 ## Automatic setup
 
-Coming soon with Smithery.
+### Installing via Smithery
+
+To install liveblocks-mcp-server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@liveblocks/liveblocks-mcp-server):
+
+```bash
+npx -y @smithery/cli install @liveblocks/liveblocks-mcp-server --client claude
+```
 
 ## Manual setup
 
@@ -70,3 +77,4 @@ sk_dev_Ns35f5G...
   }
 }
 ```
+
