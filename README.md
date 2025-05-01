@@ -7,7 +7,7 @@
   </a>
 </p>
 
-# Liveblocks MCP Server
+# `liveblocks-mcp-server`
 
 [![smithery badge](https://smithery.ai/badge/@liveblocks/liveblocks-mcp-server)](https://smithery.ai/server/@liveblocks/liveblocks-mcp-server)
 
