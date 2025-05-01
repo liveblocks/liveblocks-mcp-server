@@ -23,7 +23,7 @@ To install automatically, copy your Liveblocks secret key from a project in [you
 npx -y @smithery/cli install @liveblocks/liveblocks-mcp-server --client cursor --key [key]
 ```
 
-### Claude
+### Claude Desktop
 
 ```bash
 npx -y @smithery/cli install @liveblocks/liveblocks-mcp-server --client claude --key [key]
