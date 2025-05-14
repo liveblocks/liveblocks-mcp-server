@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/liveblocks-liveblocks-mcp-server-badge.png)](https://mseep.ai/app/liveblocks-liveblocks-mcp-server)
+
 <p align="center">
   <a href="https://liveblocks.io#gh-light-mode-only">
     <img src="https://raw.githubusercontent.com/liveblocks/liveblocks/main/.github/assets/header-light.svg" alt="Liveblocks" />
