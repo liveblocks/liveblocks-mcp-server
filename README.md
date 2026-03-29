@@ -109,3 +109,8 @@ sk_dev_Ns35f5G...
 ```
 
 </details>
+
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/liveblocks-liveblocks-mcp-server).
+
