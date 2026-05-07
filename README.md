@@ -9,103 +9,99 @@
 
 # `liveblocks-mcp-server`
 
-[![smithery badge](https://smithery.ai/badge/@liveblocks/liveblocks-mcp-server)](https://smithery.ai/server/@liveblocks/liveblocks-mcp-server)
-
 This MCP server allows AI to use a number of functions from our [REST API](https://liveblocks.io/docs/api-reference/rest-api-endpoints). For example, it can create, modify, and delete different aspects of Liveblocks such as rooms, threads, comments, notifications, and more. It also has read access to Storage and Yjs. [Learn more in our docs](https://liveblocks.io/docs/tools/mcp-server).
 
-## Automatic setup
+## Setup
 
-To install automatically, copy your Liveblocks secret key from a project in [your dashboard](https://liveblocks.io/dashboard) and run one of the following commands, replacing `[key]` with your secret key.
+To install, copy your Liveblocks secret key from a project in [your dashboard](https://liveblocks.io/dashboard) and run one of the following commands, replacing `sk_xxxxxxxxxxxxxxxx` with your secret key.
 
 ### Cursor
-
-```bash
-npx -y @smithery/cli install @liveblocks/liveblocks-mcp-server --client cursor --key [key]
-```
-
-### Claude Desktop
-
-```bash
-npx -y @smithery/cli install @liveblocks/liveblocks-mcp-server --client claude --key [key]
-```
-
-### VS Code
-
-```bash
-npx -y @smithery/cli install @liveblocks/liveblocks-mcp-server --client vscode --key [key]
-```
-
-### Other clients
-
-Find installation information for other clients on [Smithery](https://smithery.ai/server/@liveblocks/liveblocks-mcp-server).
-
-## Manual setup
 
 <details><summary>Read more</summary>
 
 <p></p>
 
-1. Clone this repo.
-
-```bash
-git clone https://github.com/liveblocks/liveblocks-mcp-server.git
-```
-
-2. Build the project.
-
-```bash
-npm install
-npm run build
-```
-
-3. Get your Liveblocks secret key from the [dashboard](https://liveblocks.io/dashboard).
-
-```
-sk_dev_Ns35f5G...
-```
-
-### Cursor
-
-4. Go to File → Cursor Settings → MCP → Add new server.
-
-5. Add the following, with the full path to the repo and your secret key:
+1. Go to File → Cursor Settings → MCP → Add new server.
+2. Add the following, inserting your secret key:
 
 ```json
 {
   "mcpServers": {
-    "liveblocks-mcp-server": {
-      "command": "node",
-      "args": ["/full/path/to/the/repo/liveblocks-mcp-server/build/index.js"],
+    "liveblocks": {
+      "command": "npx",
+      "args": ["-y", "github:liveblocks/liveblocks-mcp-server"],
       "env": {
-        "LIVEBLOCKS_SECRET_KEY": "sk_dev_Ns35f5G..."
+        "LIVEBLOCKS_SECRET_KEY": "sk_xxxxxxxxxxxxxxxx"
       }
     }
   }
 }
 ```
 
-6. Check it's enabled in the MCP menu.
+</details>
+
+### Claude Code
+
+<details><summary>Read more</summary>
+
+<p></p>
+
+Run the following command in the terminal, inserting your secret key:
+
+```bash
+claude mcp add liveblocks -e LIVEBLOCKS_SECRET_KEY=sk_xxxxxxxxxxxxxxxx -- npx -y github:liveblocks/liveblocks-mcp-server
+```
+
+</details>
 
 ### Claude Desktop
 
-4. Go to File → Settings → Developer → Edit Config.
+<details><summary>Read more</summary>
 
-5. Open the JSON file, `claude_desktop_config.json`.
+<p></p>
 
-6. Add the following, with the full path to the repo and your secret key:
+1. Go to Settings → Developer → Edit Config.
+
+2. Open the JSON file, `claude_desktop_config.json`.
+
+3. Add the following to the JSON, inserting your secret key:
 
 ```json
 {
   "mcpServers": {
-    "liveblocks-mcp-server": {
-      "command": "node",
-      "args": ["/full/path/to/the/repo/liveblocks-mcp-server/build/index.js"],
+    "liveblocks": {
+      "command": "npx",
+      "args": ["-y", "github:liveblocks/liveblocks-mcp-server"],
       "env": {
-        "LIVEBLOCKS_SECRET_KEY": "sk_dev_Ns35f5G..."
+        "LIVEBLOCKS_SECRET_KEY": "sk_xxxxxxxxxxxxxxxx"
       }
     }
   }
 }
+```
+
+4. Restart Claude Desktop to apply the changes.
+
+</details>
+
+### Codex
+
+<details><summary>Read more</summary>
+
+<p></p>
+
+1. Ensure the Codex CLI is installed:
+
+```bash
+npm i -g @openai/codex
+```
+
+2. Run the following command in the terminal, inserting your secret key:
+
+```bash
+codex mcp add liveblocks \
+  --env LIVEBLOCKS_SECRET_KEY=sk_xxxxxxxxxxxxxxxx \
+  -- npx -y github:liveblocks/liveblocks-mcp-server
 ```
 
 </details>
