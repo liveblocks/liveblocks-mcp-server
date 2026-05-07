@@ -13,7 +13,7 @@ This MCP server allows AI to use a number of functions from our [REST API](https
 
 ## Setup
 
-To install, copy your Liveblocks secret key from a project in [your dashboard](https://liveblocks.io/dashboard) and run one of the following commands, replacing `sk_xxxxxxxxxxxxxxxx` with your secret key.
+To install, copy your Liveblocks secret key from a project in [your dashboard](https://liveblocks.io/dashboard) and run one of the following commands, replacing `sk_xxxxxxxxxxxx` with your secret key.
 
 ### Cursor
 
@@ -31,7 +31,7 @@ To install, copy your Liveblocks secret key from a project in [your dashboard](h
       "command": "npx",
       "args": ["-y", "github:liveblocks/liveblocks-mcp-server"],
       "env": {
-        "LIVEBLOCKS_SECRET_KEY": "sk_xxxxxxxxxxxxxxxx"
+        "LIVEBLOCKS_SECRET_KEY": "sk_xxxxxxxxxxxx"
       }
     }
   }
@@ -49,7 +49,7 @@ To install, copy your Liveblocks secret key from a project in [your dashboard](h
 Run the following command in the terminal, inserting your secret key:
 
 ```bash
-claude mcp add liveblocks -e LIVEBLOCKS_SECRET_KEY=sk_xxxxxxxxxxxxxxxx -- npx -y github:liveblocks/liveblocks-mcp-server
+claude mcp add liveblocks -e LIVEBLOCKS_SECRET_KEY=sk_xxxxxxxxxxxx -- npx -y github:liveblocks/liveblocks-mcp-server
 ```
 
 </details>
@@ -73,7 +73,7 @@ claude mcp add liveblocks -e LIVEBLOCKS_SECRET_KEY=sk_xxxxxxxxxxxxxxxx -- npx -y
       "command": "npx",
       "args": ["-y", "github:liveblocks/liveblocks-mcp-server"],
       "env": {
-        "LIVEBLOCKS_SECRET_KEY": "sk_xxxxxxxxxxxxxxxx"
+        "LIVEBLOCKS_SECRET_KEY": "sk_xxxxxxxxxxxx"
       }
     }
   }
@@ -100,7 +100,7 @@ npm i -g @openai/codex
 
 ```bash
 codex mcp add liveblocks \
-  --env LIVEBLOCKS_SECRET_KEY=sk_xxxxxxxxxxxxxxxx \
+  --env LIVEBLOCKS_SECRET_KEY=sk_xxxxxxxxxxxx \
   -- npx -y github:liveblocks/liveblocks-mcp-server
 ```
 
