@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "liveblocks": {
+      "command": "npx",
+      "args": ["-y", "github:liveblocks/liveblocks-mcp-server"],
+      "env": {
+        "LIVEBLOCKS_SECRET_KEY": "${LIVEBLOCKS_SECRET_KEY}"
+      }
+    }
+  }
+}
