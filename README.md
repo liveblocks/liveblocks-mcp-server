@@ -11,16 +11,16 @@
 
 This MCP server allows AI to use a number of functions from our [REST API](https://liveblocks.io/docs/api-reference/rest-api-endpoints). For example, it can create, modify, and delete different aspects of Liveblocks such as rooms, threads, comments, notifications, and more. It also has read access to Storage and Yjs. [Learn more in our docs](https://liveblocks.io/docs/tools/mcp-server).
 
-The server can be used in two ways:
+## Setup
 
-- **Hosted** – a remote server using the MCP Streamable HTTP transport. Nothing to install; you authenticate with your secret key. [Jump to setup](#hosted-server).
-- **Local** – runs on your machine over stdio via `npx`. [Jump to setup](#local-server).
+You'll need a secret key from a project in [your dashboard](https://liveblocks.io/dashboard). Replace `sk_xxxxxxxxxxxx` with it in the examples below, then connect in one of two ways:
 
-In both cases you need a Liveblocks secret key from a project in [your dashboard](https://liveblocks.io/dashboard). Replace `sk_xxxxxxxxxxxx` with your secret key in the examples below.
+- **[Hosted server](#hosted-server)** – connect to `https://mcp.liveblocks.io/mcp`. Nothing to install.
+- **[Local server](#local-server)** – run on your machine with `npx`.
 
 ## Hosted server
 
-The hosted server is served at `https://your-deployment.vercel.app/mcp` (replace with the URL of your deployment), and expects your secret key as a bearer token in the `Authorization` header.
+Add `https://mcp.liveblocks.io/mcp` to your client, passing your secret key as a bearer token in the `Authorization` header.
 
 ### Cursor
 
@@ -35,7 +35,7 @@ The hosted server is served at `https://your-deployment.vercel.app/mcp` (replace
 {
   "mcpServers": {
     "liveblocks": {
-      "url": "https://your-deployment.vercel.app/mcp",
+      "url": "https://mcp.liveblocks.io/mcp",
       "headers": {
         "Authorization": "Bearer sk_xxxxxxxxxxxx"
       }
@@ -55,7 +55,7 @@ The hosted server is served at `https://your-deployment.vercel.app/mcp` (replace
 Run the following command in the terminal, inserting your secret key:
 
 ```bash
-claude mcp add --transport http liveblocks https://your-deployment.vercel.app/mcp \
+claude mcp add --transport http liveblocks https://mcp.liveblocks.io/mcp \
   --header "Authorization: Bearer sk_xxxxxxxxxxxx"
 ```
 
@@ -83,7 +83,7 @@ Claude Desktop can't send custom headers to remote servers yet, so connect throu
       "args": [
         "-y",
         "mcp-remote",
-        "https://your-deployment.vercel.app/mcp",
+        "https://mcp.liveblocks.io/mcp",
         "--header",
         "Authorization: Bearer sk_xxxxxxxxxxxx"
       ]
@@ -106,7 +106,7 @@ Add the following to `~/.codex/config.toml`, and export `LIVEBLOCKS_SECRET_KEY` 
 
 ```toml
 [mcp_servers.liveblocks]
-url = "https://your-deployment.vercel.app/mcp"
+url = "https://mcp.liveblocks.io/mcp"
 bearer_token_env_var = "LIVEBLOCKS_SECRET_KEY"
 ```
 
