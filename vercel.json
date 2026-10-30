@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
   "rewrites": [{ "source": "/mcp", "destination": "/api/mcp" }],
   "functions": {
     "api/mcp.ts": {
