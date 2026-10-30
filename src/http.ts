@@ -12,23 +12,22 @@ const CORS_HEADERS: Record<string, string> = {
 };
 
 /**
- * Resolves the Liveblocks secret key for a request.
+ * Reads the caller's Liveblocks secret key from the `Authorization: Bearer`
+ * header.
  *
- * The key is read from an `Authorization: Bearer sk_...` header, falling back
- * to `LIVEBLOCKS_SECRET_KEY` so a self-hosted, single-project deployment can be
- * configured through environment variables instead.
+ * The HTTP server is multi-tenant, so the key must always come from the
+ * request. It deliberately never falls back to the server's own environment:
+ * a stray `LIVEBLOCKS_SECRET_KEY` on the deployment would otherwise let
+ * unauthenticated requests act on that account.
  */
 function getSecretKey(req: IncomingMessage): string | undefined {
   const authorization = req.headers.authorization;
-
-  if (authorization) {
-    const match = /^Bearer\s+(.+)$/i.exec(authorization.trim());
-    if (match) {
-      return match[1].trim();
-    }
+  if (!authorization) {
+    return undefined;
   }
 
-  return process.env.LIVEBLOCKS_SECRET_KEY || undefined;
+  const match = /^Bearer\s+(.+)$/i.exec(authorization.trim());
+  return match ? match[1].trim() : undefined;
 }
 
 function sendJson(
