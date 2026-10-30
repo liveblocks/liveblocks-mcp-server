@@ -112,12 +112,6 @@ bearer_token_env_var = "LIVEBLOCKS_SECRET_KEY"
 
 </details>
 
-### Deploying your own
-
-The repository is ready to deploy to [Vercel](https://vercel.com) as-is: import it, and the `api/mcp.ts` function is exposed at `/mcp`. No environment variables are required. Every request must carry its own secret key in the `Authorization` header; the hosted server never reads a key from its own environment, so requests without one are rejected with `401`.
-
-To run the HTTP server outside Vercel (for example locally), build it and start it with `npm run start:http`. It listens on `PORT` (default `3000`) and serves the endpoint at `/mcp`.
-
 ## Local server
 
 Install by running one of the following commands, replacing `sk_xxxxxxxxxxxx` with your secret key.
