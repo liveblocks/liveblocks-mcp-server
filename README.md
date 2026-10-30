@@ -13,7 +13,114 @@ This MCP server allows AI to use a number of functions from our [REST API](https
 
 ## Setup
 
-To install, copy your Liveblocks secret key from a project in [your dashboard](https://liveblocks.io/dashboard) and run one of the following commands, replacing `sk_xxxxxxxxxxxx` with your secret key.
+You'll need a secret key from a project in [your dashboard](https://liveblocks.io/dashboard). Replace `sk_xxxxxxxxxxxx` with it in the examples below, then connect in one of two ways:
+
+- **[Hosted server](#hosted-server)** – connect to `https://mcp.liveblocks.io/mcp`. Nothing to install.
+- **[Local server](#local-server)** – run on your machine with `npx`.
+
+## Hosted server
+
+Add `https://mcp.liveblocks.io/mcp` to your client, passing your secret key as a bearer token in the `Authorization` header.
+
+### Cursor
+
+<details><summary>Read more</summary>
+
+<p></p>
+
+1. Go to File → Cursor Settings → MCP → Add new server.
+2. Add the following, inserting your secret key:
+
+```json
+{
+  "mcpServers": {
+    "liveblocks": {
+      "url": "https://mcp.liveblocks.io/mcp",
+      "headers": {
+        "Authorization": "Bearer sk_xxxxxxxxxxxx"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+### Claude Code
+
+<details><summary>Read more</summary>
+
+<p></p>
+
+Run the following command in the terminal, inserting your secret key:
+
+```bash
+claude mcp add --transport http liveblocks https://mcp.liveblocks.io/mcp \
+  --header "Authorization: Bearer sk_xxxxxxxxxxxx"
+```
+
+</details>
+
+### Claude Desktop
+
+<details><summary>Read more</summary>
+
+<p></p>
+
+Claude Desktop can't send custom headers to remote servers yet, so connect through [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
+
+1. Go to Settings → Developer → Edit Config.
+
+2. Open the JSON file, `claude_desktop_config.json`.
+
+3. Add the following to the JSON, inserting your secret key:
+
+```json
+{
+  "mcpServers": {
+    "liveblocks": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.liveblocks.io/mcp",
+        "--header",
+        "Authorization: Bearer sk_xxxxxxxxxxxx"
+      ]
+    }
+  }
+}
+```
+
+4. Restart Claude Desktop to apply the changes.
+
+</details>
+
+### Codex
+
+<details><summary>Read more</summary>
+
+<p></p>
+
+Add the following to `~/.codex/config.toml`, and export `LIVEBLOCKS_SECRET_KEY` in your shell:
+
+```toml
+[mcp_servers.liveblocks]
+url = "https://mcp.liveblocks.io/mcp"
+bearer_token_env_var = "LIVEBLOCKS_SECRET_KEY"
+```
+
+</details>
+
+### Deploying your own
+
+The repository is ready to deploy to [Vercel](https://vercel.com) as-is: import it, and the `api/mcp.ts` function is exposed at `/mcp`. No environment variables are required. Every request must carry its own secret key in the `Authorization` header; the hosted server never reads a key from its own environment, so requests without one are rejected with `401`.
+
+To run the HTTP server outside Vercel (for example locally), build it and start it with `npm run start:http`. It listens on `PORT` (default `3000`) and serves the endpoint at `/mcp`.
+
+## Local server
+
+Install by running one of the following commands, replacing `sk_xxxxxxxxxxxx` with your secret key.
 
 ### Cursor
 

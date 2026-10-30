@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Liveblocks MCP Server</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        line-height: 1.5;
+      }
+      body {
+        max-width: 640px;
+        margin: 4rem auto;
+        padding: 0 1.25rem;
+      }
+      code,
+      pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.9em;
+      }
+      pre {
+        padding: 1rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        background: rgba(127, 127, 127, 0.12);
+      }
+      a {
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Liveblocks MCP Server</h1>
+    <p>
+      This is a hosted
+      <a href="https://modelcontextprotocol.io">Model Context Protocol</a>
+      server for the
+      <a href="https://liveblocks.io/docs/api-reference/rest-api-endpoints"
+        >Liveblocks REST API</a
+      >. It uses the Streamable HTTP transport and is served at
+      <code>/mcp</code>.
+    </p>
+    <p>
+      Authenticate with your Liveblocks secret key from the
+      <a href="https://liveblocks.io/dashboard">dashboard</a>, sent as a bearer
+      token:
+    </p>
+    <pre><code>{
+  "mcpServers": {
+    "liveblocks": {
+      "url": "<span id="url">https://mcp.liveblocks.io</span>/mcp",
+      "headers": {
+        "Authorization": "Bearer sk_xxxxxxxxxxxx"
+      }
+    }
+  }
+}</code></pre>
+    <p>
+      <a href="https://liveblocks.io/docs/tools/mcp-server">Documentation</a>
+      &middot;
+      <a href="https://github.com/liveblocks/liveblocks-mcp-server">Source</a>
+    </p>
+    <script>
+      document.getElementById("url").textContent = location.origin;
+    </script>
+  </body>
+</html>
