@@ -15,7 +15,7 @@ This MCP server allows AI to use a number of functions from our [REST API](https
 
 The quickest way to connect is the hosted server: add its URL in your MCP client and sign in with your Liveblocks account when prompted.
 
-- **[Hosted server](#hosted-server)** – connect to `https://mcp.liveblocks.io/mcp` and sign in with your Liveblocks account. Nothing to install.
+- **[Hosted server](#hosted-server)** – connect to `https://mcp.liveblocks.io/mcp` and sign in with your Liveblocks account.
 - **[Authenticating with a secret key](#authenticating-with-a-secret-key)** – use a secret key as a bearer token instead of signing in, e.g. for production projects or headless use.
 - **[Local server](#local-server)** – run on your machine with `npx`.
 
