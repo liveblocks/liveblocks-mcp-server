@@ -114,8 +114,10 @@ export async function verifyAccessToken(
       keyManagementAlgorithms: ["dir"],
     });
 
-    const { sub, account_id, project_id, secret_key } = payload;
+    const { exp, sub, account_id, project_id, secret_key } = payload;
     if (
+      typeof exp !== "number" ||
+      !Number.isFinite(exp) ||
       typeof sub !== "string" ||
       typeof account_id !== "string" ||
       typeof project_id !== "string" ||
