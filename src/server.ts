@@ -10,6 +10,17 @@ import {
 } from "./zod.js";
 
 /**
+ * Optional override of the Liveblocks API host, used by preview deployments
+ * that talk to a dev backend. Unset in production, so the SDK default applies.
+ */
+function getLiveblocksBaseUrl(): string | undefined {
+  const baseUrl =
+    process.env.LIVEBLOCKS_BASE_URL ??
+    process.env.NEXT_PUBLIC_LIVEBLOCKS_BASE_URL;
+  return baseUrl?.trim() || undefined;
+}
+
+/**
  * Creates a new MCP server bound to a single Liveblocks secret key.
  *
  * A fresh instance is created per stdio process, and per HTTP request when
@@ -29,8 +40,12 @@ export function createServer(secretKey: string | undefined) {
     if (!client) {
       // Created lazily so that a missing key surfaces as a tool error rather
       // than preventing the server from starting.
+      const baseUrl = getLiveblocksBaseUrl();
       client = new Liveblocks({
         secret: secretKey as string,
+        // `baseUrl` is supported by the SDK but not part of its public types;
+        // spreading keeps the excess-property check from rejecting it.
+        ...(baseUrl ? { baseUrl } : {}),
       });
     }
     return client;
