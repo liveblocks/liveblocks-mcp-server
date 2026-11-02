@@ -13,14 +13,83 @@ This MCP server allows AI to use a number of functions from our [REST API](https
 
 ## Setup
 
-You'll need a secret key from a project in [your dashboard](https://liveblocks.io/dashboard). Replace `sk_xxxxxxxxxxxx` with it in the examples below, then connect in one of two ways:
+The quickest way to connect is the hosted server: add its URL in your MCP client and sign in with your Liveblocks account when prompted.
 
-- **[Hosted server](#hosted-server)** – connect to `https://mcp.liveblocks.io/mcp`. Nothing to install.
+- **[Hosted server](#hosted-server)** – connect to `https://mcp.liveblocks.io/mcp` and sign in with your Liveblocks account. Nothing to install.
+- **[Authenticating with a secret key](#authenticating-with-a-secret-key)** – use a secret key as a bearer token instead of signing in, e.g. for production projects or headless use.
 - **[Local server](#local-server)** – run on your machine with `npx`.
 
 ## Hosted server
 
-Add `https://mcp.liveblocks.io/mcp` to your client, passing your secret key as a bearer token in the `Authorization` header.
+Add `https://mcp.liveblocks.io/mcp` to your client. On first use, your client opens liveblocks.io in your browser where you sign in and choose which development project to connect. Only development projects can be connected this way; for a production project, use a [secret key](#authenticating-with-a-secret-key) instead.
+
+### Cursor
+
+<details><summary>Read more</summary>
+
+<p></p>
+
+1. Go to File → Cursor Settings → MCP → Add new server.
+2. Add the following:
+
+```json
+{
+  "mcpServers": {
+    "liveblocks": {
+      "url": "https://mcp.liveblocks.io/mcp"
+    }
+  }
+}
+```
+
+3. Click **Connect** next to the server and sign in with your Liveblocks account.
+
+</details>
+
+### Codex
+
+<details><summary>Read more</summary>
+
+<p></p>
+
+Run in the terminal:
+
+```bash
+codex mcp add liveblocks --url https://mcp.liveblocks.io/mcp
+codex mcp login liveblocks
+```
+
+The second command opens your browser to sign in.
+
+</details>
+
+### Claude Code
+
+<details><summary>Read more</summary>
+
+<p></p>
+
+```bash
+claude mcp add --transport http liveblocks https://mcp.liveblocks.io/mcp
+```
+
+Then run `/mcp` inside Claude Code and choose **Authenticate** for `liveblocks` to sign in.
+
+</details>
+
+### Claude Desktop
+
+<details><summary>Read more</summary>
+
+<p></p>
+
+Go to Settings → Connectors → Add custom connector, enter `https://mcp.liveblocks.io/mcp`, then click Connect and sign in.
+
+</details>
+
+## Authenticating with a secret key
+
+If you'd rather not sign in, or you need to connect a **production** project, you can pass a secret key from a project in [your dashboard](https://liveblocks.io/dashboard) as a bearer token. Replace `sk_xxxxxxxxxxxx` with it in the examples below. The key gives full access to the project, so keep it out of shared config.
 
 ### Cursor
 
@@ -206,3 +275,16 @@ codex mcp add liveblocks \
 ```
 
 </details>
+
+## Hosting the HTTP server
+
+The HTTP server (`npm run start:http`, or the Vercel functions in `api/`) accepts secret keys as bearer tokens out of the box. To also accept OAuth sign-in, it needs the shared token secret from liveblocks.io.
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `MCP_OAUTH_TOKEN_SECRET` | For OAuth | Secret shared with liveblocks.io, used to decrypt the access tokens it issues. When unset, OAuth is disabled and only secret keys are accepted. |
+| `MCP_PUBLIC_URL` | No | Public URL of this server, used as the OAuth resource identifier. Defaults to `https://mcp.liveblocks.io`. |
+| `MCP_OAUTH_ISSUER` | No | URL of the authorization server that issues tokens. Defaults to `https://liveblocks.io`. |
+| `PORT` | No | Port for `npm run start:http`. Defaults to `3000`. |
+
+When OAuth is enabled, the server advertises it at `/.well-known/oauth-protected-resource`, which MCP clients use to discover the sign-in flow.
