@@ -9,6 +9,7 @@
   "scripts": {
     "build": "tsc && chmod 755 build/index.js build/serve.js",
     "prepare": "npm run build",
+    "test": "npm run build && node --test",
     "start": "node build/index.js",
     "start:http": "node build/serve.js",
     "format": "prettier --write \"src/**/*.ts\" \"api/**/*.ts\""
@@ -26,6 +27,7 @@
   "dependencies": {
     "@liveblocks/node": "^2.24.0",
     "@modelcontextprotocol/sdk": "~1.22.0",
+    "jose": "^5.10.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
