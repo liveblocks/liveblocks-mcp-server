@@ -1,6 +1,13 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { createServer } from "./server.js";
+import {
+  getProtectedResourceMetadata,
+  isOAuthEnabled,
+  PROTECTED_RESOURCE_METADATA_PATH,
+  RESOURCE_URL,
+  verifyAccessToken,
+} from "./oauth.js";
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -12,15 +19,9 @@ const CORS_HEADERS: Record<string, string> = {
 };
 
 /**
- * Reads the caller's Liveblocks secret key from the `Authorization: Bearer`
- * header.
- *
- * The HTTP server is multi-tenant, so the key must always come from the
- * request. It deliberately never falls back to the server's own environment:
- * a stray `LIVEBLOCKS_SECRET_KEY` on the deployment would otherwise let
- * unauthenticated requests act on that account.
+ * Reads the bearer token from the `Authorization` header, if any.
  */
-function getSecretKey(req: IncomingMessage): string | undefined {
+function getBearerToken(req: IncomingMessage): string | undefined {
   const authorization = req.headers.authorization;
   if (!authorization) {
     return undefined;
@@ -28,6 +29,62 @@ function getSecretKey(req: IncomingMessage): string | undefined {
 
   const match = /^Bearer\s+(.+)$/i.exec(authorization.trim());
   return match ? match[1].trim() : undefined;
+}
+
+/**
+ * Resolves the Liveblocks secret key to act with for this request.
+ *
+ * The bearer token is either a secret key itself (`sk_...`, the headless
+ * fallback) or an OAuth access token issued by liveblocks.io, which embeds
+ * the secret key of the development project the user granted access to.
+ *
+ * The HTTP server is multi-tenant, so the key must always come from the
+ * request. It deliberately never falls back to the server's own environment:
+ * a stray `LIVEBLOCKS_SECRET_KEY` on the deployment would otherwise let
+ * unauthenticated requests act on that account.
+ */
+async function resolveSecretKey(token: string): Promise<string | undefined> {
+  if (token.startsWith("sk_")) {
+    return token;
+  }
+
+  const payload = await verifyAccessToken(token);
+  return payload?.secret_key;
+}
+
+/**
+ * Builds the `WWW-Authenticate` challenge for a 401. When OAuth is enabled,
+ * `resource_metadata` points MCP clients at the protected resource metadata
+ * so they can discover the authorization server (RFC 9728 §5.1).
+ */
+function buildWwwAuthenticate(options: { invalidToken: boolean }): string {
+  const params = ['realm="liveblocks-mcp-server"'];
+  if (isOAuthEnabled()) {
+    params.push(
+      `resource_metadata="${RESOURCE_URL}${PROTECTED_RESOURCE_METADATA_PATH}"`
+    );
+  }
+  if (options.invalidToken) {
+    params.push('error="invalid_token"');
+  }
+  return `Bearer ${params.join(", ")}`;
+}
+
+function sendUnauthorized(
+  res: ServerResponse,
+  message: string,
+  options: { invalidToken: boolean }
+) {
+  sendJson(
+    res,
+    401,
+    {
+      jsonrpc: "2.0",
+      error: { code: -32001, message: `Unauthorized: ${message}` },
+      id: null,
+    },
+    { "WWW-Authenticate": buildWwwAuthenticate(options) }
+  );
 }
 
 function sendJson(
@@ -90,40 +147,28 @@ export async function handleMcpRequest(
     return;
   }
 
-  const secretKey = getSecretKey(req);
+  const token = getBearerToken(req);
 
-  if (!secretKey) {
-    sendJson(
+  if (!token) {
+    sendUnauthorized(
       res,
-      401,
-      {
-        jsonrpc: "2.0",
-        error: {
-          code: -32001,
-          message:
-            "Unauthorized: provide your Liveblocks secret key in an `Authorization: Bearer sk_...` header",
-        },
-        id: null,
-      },
-      { "WWW-Authenticate": 'Bearer realm="liveblocks-mcp-server"' }
+      isOAuthEnabled()
+        ? "sign in with your Liveblocks account (OAuth) or provide your Liveblocks secret key in an `Authorization: Bearer sk_...` header"
+        : "provide your Liveblocks secret key in an `Authorization: Bearer sk_...` header",
+      { invalidToken: false }
     );
     return;
   }
 
-  if (!secretKey.startsWith("sk_")) {
-    sendJson(
+  const secretKey = await resolveSecretKey(token);
+
+  if (!secretKey) {
+    sendUnauthorized(
       res,
-      401,
-      {
-        jsonrpc: "2.0",
-        error: {
-          code: -32001,
-          message:
-            "Unauthorized: the provided key is not a Liveblocks secret key (expected it to start with `sk_`)",
-        },
-        id: null,
-      },
-      { "WWW-Authenticate": 'Bearer realm="liveblocks-mcp-server"' }
+      isOAuthEnabled()
+        ? "the bearer token is neither a valid OAuth access token nor a Liveblocks secret key (expected it to start with `sk_`); sign in again or check your key"
+        : "the provided key is not a Liveblocks secret key (expected it to start with `sk_`)",
+      { invalidToken: true }
     );
     return;
   }
@@ -159,4 +204,39 @@ export async function handleMcpRequest(
       res.end();
     }
   }
+}
+
+/**
+ * Serves the RFC 9728 protected resource metadata that MCP clients fetch to
+ * discover the authorization server (liveblocks.io). Responds 404 when OAuth
+ * is not configured so clients fall back to asking for a secret key.
+ */
+export function handleProtectedResourceMetadataRequest(
+  req: IncomingMessage,
+  res: ServerResponse
+): void {
+  if (req.method === "OPTIONS") {
+    res.writeHead(204, CORS_HEADERS);
+    res.end();
+    return;
+  }
+
+  if (!isOAuthEnabled()) {
+    sendJson(res, 404, { error: "OAuth is not enabled on this server" });
+    return;
+  }
+
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    sendJson(
+      res,
+      405,
+      { error: "Method not allowed" },
+      { Allow: "GET, OPTIONS" }
+    );
+    return;
+  }
+
+  sendJson(res, 200, getProtectedResourceMetadata(), {
+    "Cache-Control": "public, max-age=3600",
+  });
 }
