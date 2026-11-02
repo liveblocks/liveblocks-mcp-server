@@ -19,9 +19,14 @@ import { jwtDecrypt } from "jose";
 const ACCESS_TOKEN_TYP = "liveblocks-oauth-access";
 
 /**
- * Public URL of this resource server. Always `https://mcp.liveblocks.io` in
- * production; the authorization server uses the same literal as the token
- * audience, even for preview deployments.
+ * Public URL of this resource server, `https://mcp.liveblocks.io` in
+ * production.
+ *
+ * It is published as `resource` in the protected resource metadata, which MCP
+ * clients echo back as the RFC 8707 `resource` parameter when they request a
+ * token, and liveblocks.io then uses as the token's `aud`. So on a preview
+ * deployment `MCP_PUBLIC_URL` must be the preview's own origin, and that
+ * origin must be allowlisted on the authorization server.
  */
 export const RESOURCE_URL = (
   process.env.MCP_PUBLIC_URL ?? "https://mcp.liveblocks.io"

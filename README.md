@@ -283,8 +283,8 @@ The HTTP server (`npm run start:http`, or the Vercel functions in `api/`) accept
 | Variable | Required | Description |
 | --- | --- | --- |
 | `MCP_OAUTH_TOKEN_SECRET` | For OAuth | Secret shared with liveblocks.io, used to decrypt the access tokens it issues. When unset, OAuth is disabled and only secret keys are accepted. |
-| `MCP_PUBLIC_URL` | No | Public URL of this server, used as the OAuth resource identifier. Defaults to `https://mcp.liveblocks.io`. |
-| `MCP_OAUTH_ISSUER` | No | URL of the authorization server that issues tokens. Defaults to `https://liveblocks.io`. |
+| `MCP_PUBLIC_URL` | No | Public origin of this server, used as the OAuth resource identifier and required as the access token's `aud`. Must match the origin clients connect to and be allowlisted on the authorization server (so preview deployments need their own value). Defaults to `https://mcp.liveblocks.io`. |
+| `MCP_OAUTH_ISSUER` | No | Origin of the authorization server that issues tokens; must equal the token's `iss`. Defaults to `https://liveblocks.io`. |
 | `PORT` | No | Port for `npm run start:http`. Defaults to `3000`. |
 
 When OAuth is enabled, the server advertises it at `/.well-known/oauth-protected-resource`, which MCP clients use to discover the sign-in flow.
