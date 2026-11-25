@@ -11,110 +11,74 @@
 
 This MCP server allows AI to use a number of functions from our [REST API](https://liveblocks.io/docs/api-reference/rest-api-endpoints). For example, it can create, modify, and delete different aspects of Liveblocks such as rooms, threads, comments, notifications, and more. It also has read access to Storage and Yjs. [Learn more in our docs](https://liveblocks.io/docs/tools/mcp-server).
 
-## Setup
-
-You'll need a secret key from a project in [your dashboard](https://liveblocks.io/dashboard). Replace `sk_xxxxxxxxxxxx` with it in the examples below, then connect in one of two ways:
-
-- **[Hosted server](#hosted-server)** – connect to `https://mcp.liveblocks.io/mcp`. Nothing to install.
-- **[Local server](#local-server)** – run on your machine with `npx`.
-
 ## Hosted server
 
-Add `https://mcp.liveblocks.io/mcp` to your client, passing your secret key as a bearer token in the `Authorization` header.
+Add the following URL to an MCP client that supports remote servers and OAuth:
+
+```text
+https://mcp.liveblocks.io/mcp
+```
+
+When the client opens Liveblocks in your browser, choose the project it can access.
+**Read only** is selected by default. If the client requests write access, you can
+choose **Read and write**. Select **Allow access** to return to the client. You
+can review the project and disconnect the app later in
+[Connected apps](https://liveblocks.io/dashboard/settings/connected-apps).
 
 ### Cursor
 
-<details><summary>Read more</summary>
-
-<p></p>
-
-1. Go to File → Cursor Settings → MCP → Add new server.
-2. Add the following, inserting your secret key:
+Add this to `~/.cursor/mcp.json`, then select **Connect** in Cursor:
 
 ```json
 {
   "mcpServers": {
     "liveblocks": {
-      "url": "https://mcp.liveblocks.io/mcp",
-      "headers": {
-        "Authorization": "Bearer sk_xxxxxxxxxxxx"
-      }
+      "url": "https://mcp.liveblocks.io/mcp"
     }
   }
 }
 ```
-
-</details>
 
 ### Claude Code
 
-<details><summary>Read more</summary>
-
-<p></p>
-
-Run the following command in the terminal, inserting your secret key:
-
 ```bash
-claude mcp add --transport http liveblocks https://mcp.liveblocks.io/mcp \
-  --header "Authorization: Bearer sk_xxxxxxxxxxxx"
+claude mcp add --transport http liveblocks https://mcp.liveblocks.io/mcp
 ```
 
-</details>
+Run `/mcp` in Claude Code, select `liveblocks`, and sign in.
 
 ### Claude Desktop
 
-<details><summary>Read more</summary>
-
-<p></p>
-
-Claude Desktop can't send custom headers to remote servers yet, so connect through [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
-
-1. Go to Settings → Developer → Edit Config.
-
-2. Open the JSON file, `claude_desktop_config.json`.
-
-3. Add the following to the JSON, inserting your secret key:
-
-```json
-{
-  "mcpServers": {
-    "liveblocks": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://mcp.liveblocks.io/mcp",
-        "--header",
-        "Authorization: Bearer sk_xxxxxxxxxxxx"
-      ]
-    }
-  }
-}
-```
-
-4. Restart Claude Desktop to apply the changes.
-
-</details>
+Open **Customize → Connectors → + Add → Add custom connector**. Name it
+**Liveblocks**, enter `https://mcp.liveblocks.io/mcp`, and select **Connect**
+on the new connector.
 
 ### Codex
 
-<details><summary>Read more</summary>
-
-<p></p>
-
-Add the following to `~/.codex/config.toml`, and export `LIVEBLOCKS_SECRET_KEY` in your shell:
+Add this to `~/.codex/config.toml`:
 
 ```toml
 [mcp_servers.liveblocks]
 url = "https://mcp.liveblocks.io/mcp"
-bearer_token_env_var = "LIVEBLOCKS_SECRET_KEY"
 ```
 
-</details>
+Run `codex mcp login liveblocks` in the terminal, or select **Authenticate** in
+the Codex app.
+
+### Use a project secret key
+
+Existing clients can keep sending `Authorization: Bearer <secret-key>` to the
+same URL. This also works for scripts that run without a browser. A project
+secret key gives full access to that project. Use a development project's key
+and keep it in user-local configuration. For example, in Codex, set
+`bearer_token_env_var = "LIVEBLOCKS_SECRET_KEY"` under `[mcp_servers.liveblocks]`
+and supply the key in that environment variable.
 
 ## Local server
 
-Install by running one of the following commands, replacing `sk_xxxxxxxxxxxx` with your secret key.
+To run this repository's server on your machine, use `npx` with your development
+project's secret key from [your dashboard](https://liveblocks.io/dashboard).
+Replace `sk_xxxxxxxxxxxx` in the examples below.
 
 ### Cursor
 
