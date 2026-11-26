@@ -15,12 +15,14 @@ import {
   CopilotSettings,
   DefaultAccesses,
   GroupsAccesses,
+  GroupsAccessesUpdate,
   IsoDate,
   limitOf,
   RoomMetadata,
   RoomMetadataUpdate,
   StartingAfter,
   UsersAccesses,
+  UsersAccessesUpdate,
 } from "./zod.js";
 
 /**
@@ -150,8 +152,8 @@ export function createServer(secretKey: string | undefined) {
     {
       roomId: z.string(),
       defaultAccesses: DefaultAccesses.optional(),
-      groupsAccesses: GroupsAccesses.optional(),
-      usersAccesses: UsersAccesses.optional(),
+      groupsAccesses: GroupsAccessesUpdate.optional(),
+      usersAccesses: UsersAccessesUpdate.optional(),
       metadata: RoomMetadataUpdate.optional(),
     },
     async (
@@ -254,8 +256,8 @@ export function createServer(secretKey: string | undefined) {
       update: z
         .object({
           defaultAccesses: DefaultAccesses.optional(),
-          groupsAccesses: GroupsAccesses.optional(),
-          usersAccesses: UsersAccesses.optional(),
+          groupsAccesses: GroupsAccessesUpdate.optional(),
+          usersAccesses: UsersAccessesUpdate.optional(),
           metadata: RoomMetadataUpdate.optional(),
         })
         .describe(

@@ -56,15 +56,39 @@ export const DefaultAccesses = z.array(z.string()).describe(
     `
 );
 
-export const GroupsAccesses = z
-  .record(z.string(), z.array(z.union([z.string(), z.null()])))
-  .describe(
-    `
-      The group ID accesses for the room. Permissions can be: 
-        
+const ACCESS_LEVELS = `Permissions can be:
+
         1. ["room:write"] // public
         2. ["room:read", "room:presence:write"] // read-only
-        3. [] // private   
+        3. [] // private`;
+
+export const GroupsAccesses = z.record(z.string(), z.array(z.string()))
+  .describe(`
+      The group ID accesses for the room. ${ACCESS_LEVELS}
+
+         For example, when setting a "design" group to have full/public access:
+
+         {
+           design: ["room:write"]
+         }
+      `);
+
+export const UsersAccesses = z.record(z.string(), z.array(z.string()))
+  .describe(`
+      The user ID accesses for the room. ${ACCESS_LEVELS}
+
+         For example, when setting "charlie" user ID to have full/public access:
+
+         {
+           charlie: ["room:write"]
+         }
+      `);
+
+export const GroupsAccessesUpdate = z.record(
+  z.string(),
+  z.union([z.array(z.string()), z.null()])
+).describe(`
+      The group ID accesses to change. Groups left out keep their access. ${ACCESS_LEVELS}
 
          For example, when setting a "design" group to have full/public access:
 
@@ -77,18 +101,13 @@ export const GroupsAccesses = z
          {
            design: null
          }
-      `
-  );
+      `);
 
-export const UsersAccesses = z.record(
+export const UsersAccessesUpdate = z.record(
   z.string(),
-  z.array(z.union([z.string(), z.null()]))
+  z.union([z.array(z.string()), z.null()])
 ).describe(`
-      The user ID accesses for the room. Permissions can be: 
-        
-        1. ["room:write"] // public
-        2. ["room:read", "room:presence:write"] // read-only
-        3. [] // private   
+      The user ID accesses to change. Users left out keep their access. ${ACCESS_LEVELS}
 
          For example, when setting "charlie" user ID to have full/public access:
 
