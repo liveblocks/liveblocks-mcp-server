@@ -12,6 +12,12 @@ export async function callLiveblocksApi(
       };
     }
 
+    // Text, such as a file's Markdown, is returned as it is: as JSON it would
+    // be one quoted line with its line breaks escaped
+    if (typeof data === "string") {
+      return { content: [{ type: "text", text: data }] };
+    }
+
     return {
       content: [
         {
