@@ -9,7 +9,7 @@
 
 # `liveblocks-mcp-server`
 
-This MCP server allows AI to use a number of functions from our [REST API](https://liveblocks.io/docs/api-reference/rest-api-endpoints). For example, it can create, modify, and delete different aspects of Liveblocks such as rooms, threads, comments, notifications, and more. It also has read access to Storage and Yjs. [Learn more in our docs](https://liveblocks.io/docs/tools/mcp-server).
+This MCP server allows AI to use a number of functions from our [REST API](https://liveblocks.io/docs/api-reference/rest-api-endpoints). For example, it can create, modify, and delete different aspects of Liveblocks such as rooms, threads, comments, notifications, groups, feeds, AI Copilots, and more. It can also read Storage and Yjs documents, and initialize or delete a room's Storage. [Learn more in our docs](https://liveblocks.io/docs/tools/mcp-server).
 
 ## Setup
 
