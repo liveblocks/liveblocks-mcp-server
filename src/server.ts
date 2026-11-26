@@ -56,7 +56,7 @@ export function createServer(secretKey: string | undefined) {
     "get-rooms",
     `Get recent Liveblocks rooms`,
     {
-      limit: z.number().lte(100),
+      limit: limitOf("rooms").optional(),
       organizationId: z
         .string()
         .optional()
