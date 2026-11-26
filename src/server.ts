@@ -571,7 +571,7 @@ export function createServer(secretKey: string | undefined) {
         comment: z.object({
           body: CommentBody,
           userId: z.string(),
-          createdAt: z.date().optional(),
+          createdAt: IsoDate.optional(),
           attachmentIds: AttachmentIds.optional(),
           metadata: CommentMetadata.optional(),
         }),
@@ -638,7 +638,7 @@ export function createServer(secretKey: string | undefined) {
           z.union([z.string(), z.boolean(), z.number(), z.null()])
         ),
         userId: z.string(),
-        updatedAt: z.date().optional(),
+        updatedAt: IsoDate.optional(),
       }),
     },
     async ({ roomId, threadId, data }, extra) => {
@@ -774,7 +774,7 @@ export function createServer(secretKey: string | undefined) {
       data: z.object({
         body: CommentBody,
         userId: z.string(),
-        createdAt: z.date().optional(),
+        createdAt: IsoDate.optional(),
         attachmentIds: AttachmentIds.optional(),
         metadata: CommentMetadata.optional(),
       }),
@@ -816,7 +816,7 @@ export function createServer(secretKey: string | undefined) {
       commentId: z.string(),
       data: z.object({
         body: CommentBody,
-        editedAt: z.date().optional(),
+        editedAt: IsoDate.optional(),
         attachmentIds: AttachmentIds.optional().describe(
           "The IDs of all the attachments the comment should have afterwards, at most 10: any other attachment is removed from it. Leave this out to keep the attachments as they are."
         ),
@@ -895,7 +895,7 @@ export function createServer(secretKey: string | undefined) {
       data: z.object({
         emoji: z.string(),
         userId: z.string(),
-        createdAt: z.date().optional(),
+        createdAt: IsoDate.optional(),
       }),
     },
     async ({ roomId, threadId, commentId, data }, extra) => {
@@ -918,7 +918,7 @@ export function createServer(secretKey: string | undefined) {
       data: z.object({
         emoji: z.string(),
         userId: z.string(),
-        removedAt: z.date().optional(),
+        removedAt: IsoDate.optional(),
       }),
     },
     async ({ roomId, threadId, commentId, data }, extra) => {
