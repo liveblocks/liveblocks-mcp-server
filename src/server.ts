@@ -1391,10 +1391,10 @@ export function createServer(secretKey: string | undefined) {
         )
       ),
     },
-    async ({ userId }, extra) => {
+    async ({ userId, data }, extra) => {
       return await callLiveblocksApi(
-        getLiveblocks().getNotificationSettings(
-          { userId },
+        getLiveblocks().updateNotificationSettings(
+          { userId, data },
           { signal: extra.signal }
         )
       );
