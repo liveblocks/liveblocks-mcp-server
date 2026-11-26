@@ -8,9 +8,17 @@ const CommentBodyText = z.object({
   code: z.boolean().optional(),
 });
 
-const CommentBodyMention = z.object({
+const CommentBodyUserMention = z.object({
   type: z.literal("mention"),
+  kind: z.literal("user").default("user"),
   id: z.string(),
+});
+
+const CommentBodyGroupMention = z.object({
+  type: z.literal("mention"),
+  kind: z.literal("group"),
+  id: z.string(),
+  userIds: z.array(z.string()).optional(),
 });
 
 const CommentBodyLink = z.object({
@@ -21,7 +29,8 @@ const CommentBodyLink = z.object({
 
 const CommentBodyInlineElement = z.union([
   CommentBodyText,
-  CommentBodyMention,
+  CommentBodyUserMention,
+  CommentBodyGroupMention,
   CommentBodyLink,
 ]);
 
